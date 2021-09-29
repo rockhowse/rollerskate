@@ -10,8 +10,7 @@ Sample project to test integration of a CI/CD solution including the following
 * Harness.io on k8s: https://docs.harness.io/article/7in9z2boh6-kubernetes-quickstart
 * Concourse on k8s: https://github.com/concourse/concourse-chart
 
-
-## Prerequisits
+## Prerequisites
 
 * Mac OS X
 * helm v3.x
