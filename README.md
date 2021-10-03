@@ -214,5 +214,3 @@ To get some metrics from the k8s cluster we can add a dashboard by clicking the 
 On the next screen select the "Prometheus" data source and click "Import".
 
 You should now see some k8s-specific dashboard widgets populated with data from your k8s cluster.
-
-
