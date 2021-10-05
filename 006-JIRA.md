@@ -1,5 +1,7 @@
 # integrate jira into k8s
 
+(WORK IN PROGRES)
+
 This assumes you have completed the prerequisites and walks through the following install instructions:
 
 https://atlassian.github.io/data-center-helm-charts/userguide/INSTALLATION/
