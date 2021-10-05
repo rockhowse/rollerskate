@@ -62,6 +62,27 @@ minikube start --kubernetes-version=v1.21.2 start --cpus 4 --memory 12288 --driv
 🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
 ```
 
+### Install Nginx ingress controller
+
+```bash
+❯ minikube addons enable ingress
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.0
+    ▪ Using image k8s.gcr.io/ingress-nginx/controller:v1.0.0-beta.3
+    ▪ Using image k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.0
+🔎  Verifying ingress addon...
+🌟  The 'ingress' addon is enabled
+```
+
+#### Verify nginx pods are started
+
+```bash
+❯ kubectl get pods -n ingress-nginx
+NAME                                        READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-n4gg9        0/1     Completed   0          3m30s
+ingress-nginx-admission-patch-dm492         0/1     Completed   1          3m30s
+ingress-nginx-controller-69bdbc4d57-ssq89   1/1     Running     0          3m31s
+```
+
 And getting a list of pod for the current context:
 
 ```bash
