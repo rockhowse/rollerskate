@@ -1,0 +1,6 @@
+*.yml
+*.yaml
+*.tgz
+*.tar.gz
+*.BAK
+/harness-delegate-kubernetes

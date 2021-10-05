@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: graphana-server
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: test.rockhowse.com
+      http:
+        paths:
+          - path: /grafana/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: release-0868173b-25eb-3ecf-8da9-3191976d02a0-grafana
+                port:
+                  number: 3000
