@@ -1,5 +1,7 @@
 # configure drone for k8s
 
+(WORK IN PROGRES)
+
 This assumes you have completed the prerequisites and walks through the following install instructions:
 
 https://github.com/drone/charts/blob/master/charts/drone/docs/install.md

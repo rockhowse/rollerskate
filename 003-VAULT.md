@@ -1,5 +1,7 @@
 # configure vault for k8s
 
+(WORK IN PROGRES)
+
 This assumes you have completed the prerequisites and walks through the following install instructions:
 
 https://learn.hashicorp.com/tutorials/vault/kubernetes-raft-deployment-guide?in=vault/kubernetes

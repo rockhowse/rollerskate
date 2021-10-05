@@ -1,5 +1,7 @@
 # integrate artifactory into k8s
 
+(WORK IN PROGRES)
+
 This assumes you have completed the prerequisites and walks through the following install instructions:
 
 https://www.jfrog.com/confluence/display/JFROG/Installing+Artifactory#InstallingArtifactory-HelmInstallation
