@@ -194,14 +194,26 @@ Setup -> Hashicorp Platform -> Services -> Pipelines -> `Deploy Hashicorp Platfo
 
 TODO: there is an issue with k8s version detection here... Need to figure it out
 
+TEMP: we are temporarily going to install via CLI
+
+```bash
+❯ helm install consul hashicorp/consul --values helm-consul-values.yml -n hashicorp-platform
+NAME: consul
+LAST DEPLOYED: Wed Oct  6 11:52:04 2021
+NAMESPACE: hashicorp-platform
+STATUS: deployed
+REVISION: 1
+NOTES:
+Thank you for installing HashiCorp Consul!
+```
+
 ### Verify consul is running successfully in your cluster
 
 You can make use of the `kubectl` command to verify you see services running in the`hashicorp-platform` namespace:
 
 ```bash
-❯ kubectl get pods -n jfrog-platform
-NAME                                                              READY   STATUS    RESTARTS   AGE
-r-c1826f2c-7c7b-362f-9ebc-e1d164910986-artifactory-0              1/1     Running   0          45m
-r-c1826f2c-7c7b-362f-9ebc-e1d164910986-artifactory-nginx-7kgzrl   1/1     Running   0          45m
-r-c1826f2c-7c7b-362f-9ebc-e1d164910986-postgresql-0               1/1     Running   0          45m
+❯ kubectl get pod -n hashicorp-platform
+NAME                     READY   STATUS    RESTARTS   AGE
+consul-consul-hnv2j      1/1     Running   0          56s
+consul-consul-server-0   1/1     Running   0          56s
 ```
