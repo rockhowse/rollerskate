@@ -141,8 +141,8 @@ This will leverage the `kube-prometheus-stack` Helm3 chart to install
 
 Setup -> Kube Prometheus Stack -> Services -> Add Service
 
-* Name: Kube Prometheus Stack
-* Deployment Type: Kubernetes
+* Name: `Kube Prometheus Stack`
+* Deployment Type: `Kubernetes`
 
 ##### Add the Helm3 chart
 
@@ -238,7 +238,7 @@ Setup -> Kube Prometheus Stack -> Services -> Pipelines -> `Deploy Kube Promethe
 * Infrastructure Definition: `local-minikube-cluster`
 * Option to Skip: `Do not skip`
 
-#### Add Install CRDs stage
+#### Add Kube Prometheus Stack stage
 
 Setup -> Kube Prometheus Stack -> Services -> Pipelines -> `Deploy Kube Prometheus Stack` -> Stage 3
 
