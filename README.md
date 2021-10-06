@@ -6,10 +6,10 @@ Sample project to test integration of a CI/CD solution using harness.io and dron
   * https://docs.harness.io/article/7in9z2boh6-kubernetes-quickstart
 * Prometheus, Graphana and Alertmanager on k8s:
   * https://blog.marcnuri.com/prometheus-grafana-setup-minikube
-* Vault on k8s:
-  * https://learn.hashicorp.com/tutorials/vault/kubernetes-raft-deployment-guide?in=vault/kubernetes
 * Artifactory on k8s:
   * https://jfrog.com/screencast/jfrog-artifactory-ha-cluster-deployment-kubernetes-using-helm/
+* Vault on k8s:
+  * https://learn.hashicorp.com/tutorials/vault/kubernetes-raft-deployment-guide?in=vault/kubernetes
 * Drone on k8s:
   * https://readme.drone.io/runner/kubernetes/installation/
 * Jira on k8s:
