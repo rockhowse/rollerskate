@@ -103,14 +103,14 @@ This will leverage the `consul` Helm3 chart to install
 
 Setup -> Hashicorp Platform -> Services -> Add Service
 
-* Name: `Hashicorp Platform`
+* Name: `Consul`
 * Deployment Type: `Kubernetes`
 
 ##### Add the Helm3 chart
 
 `THIS IS NOT A PRODUCTION LEVEL CONFIGURATION!`
 
-Setup -> Hashicorp Platform -> Services -> `JFrog Platform`
+Setup -> Hashicorp Platform -> Services -> `Consul`
 
 Manifests -> (upper right hand corner) -> Link Remote Manifests -> Choose Files
 
@@ -181,7 +181,7 @@ Setup -> Hashicorp Platform -> Services -> Pipelines -> `Deploy Hashicorp Platfo
 * Infrastructure Definition: `local-minikube-cluster`
 * Option to Skip: `Do not skip`
 
-#### Add Hashicorp Platform stage
+#### Add Deploy Consul stage
 
 Setup -> Hashicorp Platform -> Services -> Pipelines -> `Deploy Hashicorp Platform` -> Stage 2
 
@@ -216,4 +216,109 @@ You can make use of the `kubectl` command to verify you see services running in 
 NAME                     READY   STATUS    RESTARTS   AGE
 consul-consul-hnv2j      1/1     Running   0          56s
 consul-consul-server-0   1/1     Running   0          56s
+```
+
+#### Create the Vault service
+
+This will leverage the `vault` Helm3 chart to install
+
+* `vault`
+
+Setup -> Hashicorp Platform -> Services -> Add Service
+
+* Name: `Vault`
+* Deployment Type: `Kubernetes`
+
+##### Add the Helm3 chart
+
+`THIS IS NOT A PRODUCTION LEVEL CONFIGURATION!`
+
+Setup -> Hashicorp Platform -> Services -> `Vault`
+
+Manifests -> (upper right hand corner) -> Link Remote Manifests -> Choose Files
+
+* Manifest Format: `Helm Chart From Helm Repository`
+* Helm Repository: `hashicorp`
+* Chart Name: `vault`
+* Chart Version: `0.16.1`
+* Helm Version: `v3`
+
+In order to get the latest version, you can do the following if you have Helm3 installed locally:
+
+```bash
+❯ helm repo add hashicorp https://helm.releases.hashicorp.com
+"hashicorp" already exists with the same configuration, skipping
+
+❯ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...
+...Successfully got an update from the "hashicorp" chart repository
+...
+Update Complete. ⎈Happy Helming!⎈
+
+❯ helm search repo hashicorp/vault
+NAME           	CHART VERSION	APP VERSION	DESCRIPTION
+hashicorp/vault	0.16.1       	1.8.3      	Official HashiCorp Vault Chart
+```
+
+##### Add Helm3 overrides
+
+`THIS IS NOT A PRODUCTION LEVEL CONFIGURATION!`
+
+The default configuration creates many more resources than what we need for vault so let's do some overrides to limit the scope of the deploy.
+
+Setup -> Hashicorp Platform -> Services -> `Vault`
+
+Configuration -> Values YAML Override -> (upper right hand corner) -> Edit
+
+* Store Type: `Inline`
+
+```yaml
+server:
+  affinity: ""
+  ha:
+    enabled: true
+```
+
+#### Add Deploy Consul stage to pipeline
+
+Setup -> Hashicorp Platform -> Services -> Pipelines -> `Deploy Hashicorp Platform` -> Stage 2
+
+* Step Name: `Deploy Vault`
+* Execute Workflow: `Rolling Deployment`
+* Environment: `local-minikube`
+* Service: `Vault`
+* Infrastructure Definition: `local-minikube-cluster`
+* Option to Skip: `Do not skip`
+
+TODO: there is an issue with rollup and Rolling Deploy... Need to figure it out
+
+TEMP: we are temporarily going to install via CLI
+
+```bash
+❯ helm install vault hashicorp/vault --values helm-vault-values.yml -n hashicorp-platform
+W1006 12:08:18.351541   93381 warnings.go:70] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
+W1006 12:08:18.460034   93381 warnings.go:70] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
+NAME: vault
+LAST DEPLOYED: Wed Oct  6 12:08:18 2021
+NAMESPACE: hashicorp-platform
+STATUS: deployed
+REVISION: 1
+NOTES:
+Thank you for installing HashiCorp Vault!
+```
+
+### Verify vault is running successfully in your cluster
+
+You can make use of the `kubectl` command to verify you see services running in the`hashicorp-platform` namespace:
+
+```bash
+❯ kubectl get pod -n hashicorp-platform
+NAME                                    READY   STATUS    RESTARTS   AGE
+consul-consul-52259                     1/1     Running   0          54s
+consul-consul-server-0                  1/1     Running   0          54s
+vault-0                                 0/1     Running   0          41s
+vault-1                                 0/1     Running   0          41s
+vault-2                                 0/1     Running   0          41s
+vault-agent-injector-77cd49cdd5-8wfbz   1/1     Running   0          41s
 ```
