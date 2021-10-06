@@ -3,4 +3,5 @@
 *.tgz
 *.tar.gz
 *.BAK
+*.json
 /harness-delegate-kubernetes

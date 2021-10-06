@@ -322,3 +322,107 @@ vault-1                                 0/1     Running   0          41s
 vault-2                                 0/1     Running   0          41s
 vault-agent-injector-77cd49cdd5-8wfbz   1/1     Running   0          41s
 ```
+
+You can double check to see the unseal progress for the 3 HA Vault instances by checking `vault-0`:
+
+```bash
+❯ kubectl exec -n hashicorp-platform vault-0 -- vault status
+Key                Value
+---                -----
+Seal Type          shamir
+Initialized        false
+Sealed             true
+Total Shares       0
+Threshold          0
+Unseal Progress    0/0
+Unseal Nonce       n/a
+Version            1.8.3
+Storage Type       consul
+HA Enabled         true
+command terminated with exit code 2
+```
+
+##### Initialize and unseal the vault
+
+`THIS IS NOT A PRODUCTION LEVEL CONFIGURATION!`
+
+Before we can make use of vault in k8s, we need to unseal it.
+
+```bash
+kubectl exec -n hashicorp-platform vault-0 -- vault operator init -key-shares=1 -key-threshold=1 -format=json > cluster-keys.json
+```
+
+Display the unseal information:
+
+```bash
+❯ cat cluster-keys.json | jq -r ".unseal_keys_b64[]"
+<RANDOM_UNSEAL_INFORMATION>
+```
+
+```bash
+Insecure operation: Do not run an unsealed Vault in production with a single key share and a single key threshold. This approach is only used here to simplify the unsealing process for this demonstration.
+```
+
+Create an environment variable to hold the unsealed key:
+
+```bash
+VAULT_UNSEAL_KEY=$(cat cluster-keys.json | jq -r ".unseal_keys_b64[]")
+```
+
+Unseal vault running on the `vault-0` pod:
+
+```bash
+❯ kubectl exec -n hashicorp-platform vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+Key             Value
+---             -----
+Seal Type       shamir
+Initialized     true
+Sealed          false
+Total Shares    1
+Threshold       1
+Version         1.8.3
+Storage Type    consul
+Cluster Name    vault-cluster-806c29d7
+Cluster ID      01382dbe-e15f-80b5-798a-ad63b5681257
+HA Enabled      true
+HA Cluster      https://vault-0.vault-internal:8201
+HA Mode         active
+Active Since    2021-10-06T17:41:41.291583191Z
+```
+
+```bash
+Insecure operation: Providing the unseal key with the command writes the key to your shell's history. This approach is only used here to simplify the unsealing process for this demonstration.
+```
+
+Unseal vault running on the `vault-1` pod:
+
+```bash
+❯ kubectl exec -n hashicorp-platform vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+...
+```
+
+Unseal vault running on the `vault-2` pod:
+
+```bash
+❯ kubectl exec -n hashicorp-platform vault-2 -- vault operator unseal $VAULT_UNSEAL_KEY
+...
+```
+
+##### Verify All Consul and Vault instances are running
+
+Now that `consul` and `vault` charts have been applied and the vault ha pods have been unsealed, all pods should be running:
+
+```bash
+❯ kubectl get pod -n hashicorp-platform
+NAME                                    READY   STATUS    RESTARTS   AGE
+consul-consul-52259                     1/1     Running   0          31m
+consul-consul-server-0                  1/1     Running   0          31m
+vault-0                                 1/1     Running   0          31m
+vault-1                                 1/1     Running   0          31m
+vault-2                                 1/1     Running   0          31m
+vault-agent-injector-77cd49cdd5-8wfbz   1/1     Running   0          31m
+```
+
+You should now be able to interact with vault using one of the pods. Fore more information look here:
+
+https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube?in=vault/kubernetes#set-a-secret-in-vault
