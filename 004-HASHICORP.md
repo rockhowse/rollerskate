@@ -1,8 +1,8 @@
-# install consul
+# install consul and vault in minikube
 
 Process outlined here:
 
-https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube?in=vault/kubernetes#install-the-consul-helm-chart
+https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube?in=vault/kubernetes
 
 The rest of this process assumes you are using harness.io
 
