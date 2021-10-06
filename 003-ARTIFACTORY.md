@@ -31,37 +31,37 @@ Setup -> Add Application
 
 ### Add Environment
 
-Setup -> Kube Prometheus Stack -> Environments -> Add Environment
+Setup -> JFrog Platform -> Environments -> Add Environment
 
 * Name: `local-minikube`
 
 #### Add Infrastructure Definition
 
-Setup -> Kube Prometheus Stack -> Environments -> local-minikube
+Setup -> JFrog Platform -> Environments -> local-minikube
 
 * Name: `local-minikube-cluster`
 * Cloud Provider Type: `Kubernetes Cluster`
 * Deployment Type: `Kubernetes`
 * Use already Provisioned Infrastructure -> `Minikube Cluster`
-* Namespace: `monitoring`
+* Namespace: `jfrog-platform`
 * Release Name: `r-${infra.kubernetes.infraId}`
   * NOTE: We reduce `release-` to `r-` due to length of k8s names limited to 63 characters =P
 
 ### Add Workflow
 
-Setup -> Kube Prometheus Stack -> Workflows -> Add Workflow
+Setup -> JFrog Platform -> Workflows -> Add Workflow
 
 * Name: `Rolling Deployment`
 * Workflow Type: `Rolling Deployment`
 * Environment: `local-minikube`
-* Service: `Kube Prometheus Stack`
+* Service: `JFrog Platform`
 * Infrastructure Definition: `local-minikube-cluster`
 
 #### Templatize Workflow
 
 In order for us to use the same `Rolling Deployment` for more than just the hard coded environment, service and infrastructure we need to templatize it.
 
-Setup -> Kube Prometheus Stack -> Workflows -> `Rolling Deployment`
+Setup -> JFrog Platform -> Workflows -> `Rolling Deployment`
 
 * Upper right hand corner -> Edit
 * Environment -> (Click the [T] upper right hand corner) -> `${Environment}`
@@ -76,14 +76,14 @@ Due to some changes in Helm3, we need to do a bit of manual stuff (can probably 
 
 #### Add Create Namespace Service
 
-Setup -> Kube Prometheus Stack -> Services -> Add Service
+Setup -> JFrog Platform -> Services -> Add Service
 
 * Name: `Create Namespace`
 * Deployment Type: `Kubernetes`
 
 ##### Update Templates to only create a namespace
 
-Setup -> Kube Prometheus Stack -> Services -> `Create Namespace`
+Setup -> JFrog Platform -> Services -> `Create Namespace`
 
 * Under "templates" delete `deployment.yaml` and `service.yaml`
 * Trim `values.yaml` to only contain the namespace values
@@ -103,7 +103,7 @@ This will leverage the `jfrog-platform` Helm3 chart to install
 * `postgres`
 * `nginx`
 
-Setup -> Kube Prometheus Stack -> Services -> Add Service
+Setup -> JFrog Platform -> Services -> Add Service
 
 * Name: `JFrog Platform`
 * Deployment Type: `Kubernetes`
@@ -112,7 +112,7 @@ Setup -> Kube Prometheus Stack -> Services -> Add Service
 
 `THIS IS NOT A PRODUCTION LEVEL CONFIGURATION!`
 
-Setup -> Kube Prometheus Stack -> Services -> `JFrog Platform`
+Setup -> JFrog Platform -> Services -> `JFrog Platform`
 
 Manifests -> (upper right hand corner) -> Link Remote Manifests -> Choose Files
 
@@ -125,17 +125,17 @@ Manifests -> (upper right hand corner) -> Link Remote Manifests -> Choose Files
 In order to get the latest version, you can do the following if you have Helm3 installed locally:
 
 ```bash
-❯ helm repo add jfrog-platform https://charts.jfrog.io
-"jfrog-platform" has been added to your repositories
+❯ helm repo add jfrog https://charts.jfrog.io
+"jfrog" has been added to your repositories
 
 ❯ helm repo update
 Hang tight while we grab the latest from your chart repositories...
 ...
-...Successfully got an update from the "jfrog-platform" chart repository
+...Successfully got an update from the "jfrog" chart repository
 ...
 Update Complete. ⎈Happy Helming!⎈
 
-❯ helm search repo jfrog-platform/jfrog-platform
+❯ helm search repo jfrog/jfrog-platform
 NAME                	CHART VERSION	APP VERSION	DESCRIPTION
 jfrog/jfrog-platform	0.10.1       	7.25.7     	The Helm chart for JFrog Platform (Universal, h...
 ```
@@ -146,7 +146,7 @@ jfrog/jfrog-platform	0.10.1       	7.25.7     	The Helm chart for JFrog Platform
 
 The default configuration has a bunch of services we aren't going to use and each of them require hundreds of gigs of persistent volume claims by default. So let's trim it down a bit.
 
-Setup -> Kube Prometheus Stack -> Services -> `JFrog Platform`
+Setup -> JFrog Platform -> Services -> `JFrog Platform`
 
 Configuration -> Values YAML Override -> (upper right hand corner) -> Edit
 
@@ -180,13 +180,13 @@ NOTE: if you want to use `artifactory-ha` it requires an `enterprise` licence, w
 
 ### Create Pipeline using services created above
 
-Setup -> Kube Prometheus Stack -> Services -> Pipelines -> Add Pipeline
+Setup -> JFrog Platform -> Services -> Pipelines -> Add Pipeline
 
 Name: `Deploy JFrog Platform`
 
 #### Add Create Namespace stage
 
-Setup -> Kube Prometheus Stack -> Services -> Pipelines -> `Deploy JFrog Platform` -> Stage 1
+Setup -> JFrog Platform -> Services -> Pipelines -> `Deploy JFrog Platform` -> Stage 1
 
 * Step Name: `Create Namespace`
 * Execute Workflow: `Rolling Deployment`
@@ -197,9 +197,9 @@ Setup -> Kube Prometheus Stack -> Services -> Pipelines -> `Deploy JFrog Platfor
 
 #### Add JFrog Platform stage
 
-Setup -> Kube Prometheus Stack -> Services -> Pipelines -> `Deploy JFrog Platform` -> Stage 2
+Setup -> JFrog Platform -> Services -> Pipelines -> `Deploy JFrog Platform` -> Stage 2
 
-* Step Name: `Kube Prometheus Stack`
+* Step Name: `JFrog Platform`
 * Execute Workflow: `Rolling Deployment`
 * Environment: `local-minikube`
 * Service: `JFrog Platform`
